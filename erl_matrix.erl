@@ -1,4 +1,4 @@
--module(matrix).
+-module(erl_matrix).
 -export([multiply/2]).
 -include_lib("eunit/include/eunit.hrl").
 
@@ -85,7 +85,7 @@ strassen(A, B) ->
     combine(C11, C12, C21, C22).
 
 
-multiply(A, B) ->
+strassen_multiply(A, B) ->
     OriginalRows = length(A),
     OriginalCols = length(hd(B)),
 

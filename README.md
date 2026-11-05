@@ -8,11 +8,11 @@ This repository serves as the single-core baseline for an Honours project focusi
 
 ### 1. Image Processing: 2D Convolution Blur (`image_blur.erl`)
 A purely functional implementation of a $3 \times 3$ Box Blur (Averaging) filter.
-* **Mechanism:** Uses recursive list pattern matching to slide a 9-pixel averaging kernel across a 2D grid, smoothing high-frequency data without mutable state or `for` loops. Automatically trims the 1-pixel outer boundary.
+* **Mechanism:** Uses recursive list pattern matching to slide a 9 pixel averaging kernel across a 2D grid, smoothing high frequency data without mutable state or `for` loops. Automatically trims the 1 pixel outer boundary.
 
 ### 2. Matrix Multiplication: Strassen's Method (`erl_matrix.erl`)
 A highly recursive $O(n^{2.81})$ Divide-and-Conquer algorithm utilizing dynamic zero-padding.
-* **Mechanism:** Sub-divides matrices into quadrants and recursively calculates 7 intermediate matrices ($M_1$ - $M_7$).
+* **Mechanism:** Subdivides matrices into quadrants and recursively calculates 7 intermediate matrices ($M_1$ - $M_7$).
 
 ### 3. Matrix Multiplication: Standard (`erl_matrix.erl`)
 An $O(n^3)$ implementation relying on matrix transposition and list comprehensions.
@@ -41,7 +41,7 @@ erl
 3> erl_matrix:standard_multiply(A, B).
 4> erl_matrix:strassen_multiply(A, B). %% Strassen wrapper
 ```
-(_Note: Erlang interprets lists of integers in the printable ASCII range as strings. Use io:format("~w~n", [Result]) to print raw integers_).\
+(_Note: Erlang interprets lists of integers in the printable ASCII range as strings. Use io:format("~w~n", [Result]) to print raw integers_).
 
 ## Resources & References
 * [Learn You Some Erlang for Great Good!](https://learnyousomeerlang.com/)

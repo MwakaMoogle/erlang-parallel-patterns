@@ -1,6 +1,8 @@
 -module(erl_matrix).
--export([multiply/2]).
+-export([strassen_multiply/2, standard_multiply/2]).
 -include_lib("eunit/include/eunit.hrl").
+
+%% -- Strassen's Method ---
 
 %% Multiplying matricies recursively using Strassen’s algorithm
 %% https://www.codelessgenie.com/blog/matrix-multiplication-recursive/#2-the-recursive-approach-fundamentals
@@ -76,14 +78,13 @@ strassen(A, B) ->
     M6 = strassen(sub(A21, A11), add(B11, B12)),
     M7 = strassen(sub(A12, A22), add(B21, B22)),
 
-    % combine into c quadrents
+    %% combine into c quadrents
     C11 = add(sub(add(M1, M4), M5), M7),
     C12 = add(M3, M5),
     C21 = add(M2, M4),
     C22 = add(add(sub(M1, M2), M3), M6),
 
     combine(C11, C12, C21, C22).
-
 
 strassen_multiply(A, B) ->
     OriginalRows = length(A),
@@ -96,6 +97,23 @@ strassen_multiply(A, B) ->
     PaddedC = strassen(PaddedA, PaddedB),
 
     trim(PaddedC, OriginalRows, OriginalCols).
+
+%% --- Noraml Method ---
+
+%% Normal matrix multiplication
+standard_multiply(A, B) ->
+    B_Transposed = transpose(B),
+    [ [ dot_product(RowA, ColB) || ColB <- B_Transposed ] || RowA <- A].
+
+%% Calculates the dot product of two lists
+dot_product(RowA, ColB) ->
+    lists:sum(lists:zipwith(fun(X, Y) -> X * Y end, RowA, ColB)).
+
+%% Transposes a matrix, collums become rows
+transpose([[]|_]) ->
+    [];
+transpose(Matrix) ->
+    [lists:map(fun hd/1, Matrix) | transpose(lists:map(fun tl/1, Matrix))].
 
 %% --- EUNIT TESTS ---
 
@@ -121,28 +139,28 @@ strassen_test() ->
 
     %Multiplying the Identity Matrix returns the original matrix
     Identity = [[1, 0], [0, 1]],
-    ?assertEqual(A, multiply(A, Identity)).
+    ?assertEqual(A, standard_multiply(A, Identity)).
 
 % 4. Test an Uneven Matrix (Tests padding, math and trimming all at once)
 uneven_strassen_test() ->
     A = [[1, 2, 3], [4, 5, 6]],
     B = [[7, 8], [9, 10], [11, 12]],
     Expected = [[58, 64], [139, 154]],
-    ?assertEqual(Expected, multiply(A, B)).
+    ?assertEqual(Expected, standard_multiply(A, B)).
 
 % 5. Test the Base Case (1 X 1 Matrix)
 base_case_test() ->
     A = [[5]],
     B = [[4]],
     Expected = [[20]],
-    ?assertEqual(Expected, multiply(A, B)).
+    ?assertEqual(Expected, standard_multiply(A, B)).
 
 % 6. Test Negative Numbers
 negative_numbers_test() ->
     A = [[-1, -2], [-3, -4]],
     B = [[1, 2], [3, 4]],
     Expected = [[-7, -10], [-15, -22]],
-    ?assertEqual(Expected, multiply(A, B)).
+    ?assertEqual(Expected, standard_multiply(A, B)).
 
 % 7. Test the Zero Matrix
 zero_matrix_test() ->
@@ -152,8 +170,8 @@ zero_matrix_test() ->
     Zero = [[0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]],
-    ?assertEqual(Zero, multiply(A, Zero)),
-    ?assertEqual(Zero, multiply(Zero, A)).
+    ?assertEqual(Zero, standard_multiply(A, Zero)),
+    ?assertEqual(Zero, standard_multiply(Zero, A)).
 
 
 % 8. Test Extreme Asymmetry
@@ -164,8 +182,4 @@ extreme_asymetry_test() ->
                 [2, 4, 6, 8],
                 [3, 6, 9, 12],
                 [4, 8, 12, 16]],
-    ?assertEqual(Expected, multiply(A, B)).
-
-
-
-
+    ?assertEqual(Expected, standard_multiply(A, B)).

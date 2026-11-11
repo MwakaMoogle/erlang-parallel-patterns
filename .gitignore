@@ -1,25 +1,17 @@
-# =========================
-# Erlang
-# =========================
-*.beam
-erl_crash.dump
+# Rebar3 Build Artifacts
 _build/
 rebar.lock
 
-# =========================
-# Project Specific
-# =========================
+# Erlang Compiled Files & Logs
+*.beam
+*.app.up
+erl_crash.dump
 
-# =========================
-# macOS
-# =========================
+# macOS System Files
 .DS_Store
-
-# =========================
-# Editors and IDEs
-# =========================
-.vscode/
-.idea/
-*.swp
-*~
-*.bak
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes

@@ -67,26 +67,36 @@ strassen([[X]], [[Y]]) ->
 
 %% Recursive 
 strassen(A, B) ->
-    %% Split the matricies into quadrents
-    {A11, A12, A21, A22} = split(A),
-    {B11, B12, B21, B22} = split(B),
+    N = length(A),
 
-    %% Calculate M1 through M7
-    M1 = strassen(add(A11, A22), add(B11, B22)),
-    M2 = strassen(add(A21, A22), B11),
-    M3 = strassen(A11, sub(B12, B22)),
-    M4 = strassen(A22, sub(B21, B11)),
-    M5 = strassen(add(A11, A12), B22),
-    M6 = strassen(sub(A21, A11), add(B11, B12)),
-    M7 = strassen(sub(A12, A22), add(B21, B22)),
+    %% If the matrix is 32x32 or smaller, stop splitting and use standard multiplication
+    if 
+        N =< 32 ->
+            standard_multiply(A, B);
 
-    %% combine into c quadrents
-    C11 = add(sub(add(M1, M4), M5), M7),
-    C12 = add(M3, M5),
-    C21 = add(M2, M4),
-    C22 = add(add(sub(M1, M2), M3), M6),
+        %% Otherwise, continue splitting 
+        true ->
+             %% Split the matricies into quadrents
+            {A11, A12, A21, A22} = split(A),
+            {B11, B12, B21, B22} = split(B),
 
-    combine(C11, C12, C21, C22).
+            %% Calculate M1 through M7
+            M1 = strassen(add(A11, A22), add(B11, B22)),
+            M2 = strassen(add(A21, A22), B11),
+            M3 = strassen(A11, sub(B12, B22)),
+            M4 = strassen(A22, sub(B21, B11)),
+            M5 = strassen(add(A11, A12), B22),
+            M6 = strassen(sub(A21, A11), add(B11, B12)),
+            M7 = strassen(sub(A12, A22), add(B21, B22)),
+
+            %% combine into c quadrents
+            C11 = add(sub(add(M1, M4), M5), M7),
+            C12 = add(M3, M5),
+            C21 = add(M2, M4),
+            C22 = add(add(sub(M1, M2), M3), M6),
+
+            combine(C11, C12, C21, C22)
+    end.
 
 strassen_multiply(A, B) ->
     OriginalRows = length(A),
